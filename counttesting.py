@@ -50,58 +50,31 @@ def resultant(to_insert, value, result):
 def level_one(numbers,result):
     if(len(numbers)==1):
         return
+    ops = ['+', '-', '/', '*']
     global answer_found
     global target
     first = list(itertools.permutations(numbers, 2))
     #need new list to pass to level two
     for thing in first:
-    #add
-        value = guess('+', numbers, result, thing[0], thing[1])
-        if value == target:
-            answer_found = True
-            result = ['(', thing[0], '+', thing[1], ')']
-            return result
-        temp = temps(numbers,thing[0],thing[1],value)
-        result = level_one(temp, result)
-        if answer_found:
-            to_insert = ['(', thing[0],'+', thing[1], ')']
-            return resultant(to_insert, value, result)
-    #subtract
-        if (thing[0] - thing[1]) > 0:
-            value = guess('-', numbers, result, thing[0], thing[1])
+        for op in ops:
+        #compressed operations loop
+        #need to check exception cases for subtraction and division
+            if op=='/' and ((thing[1]==0) or ((thing[0]/thing[1])%1 != 0)):
+                break
+            if op=='-' and ((thing[0] - thing[1]) <= 0):
+                break
+            value = guess(op, numbers, result, thing[0], thing[1])
             if value == target:
-                answer_found = True 
-                result = ['(', thing[0], '-', thing[1], ')']
+                answer_found = True
+                result = ['(', thing[0], op, thing[1], ')']
                 return result
             temp = temps(numbers,thing[0],thing[1],value)
             result = level_one(temp, result)
             if answer_found:
-                to_insert = ['(', thing[0],'-', thing[1], ')']
+                to_insert = ['(', thing[0],op, thing[1], ')']
                 return resultant(to_insert, value, result)
-    #multiply
-        value = guess('*', numbers, result, thing[0], thing[1])
-        if value == target:
-            answer_found = True 
-            result = ['(', thing[0], '*', thing[1], ')']
-            return result
-        temp = temps(numbers,thing[0],thing[1],value)
-        result = level_one(temp, result)
-        if answer_found:
-            to_insert = ['(', thing[0],'*', thing[1], ')']
-            return resultant(to_insert, value, result)
-    #divide
-        if (thing[1]!=0) or ((thing[0]/thing[1])%1 == 0):
-            value = guess('/', numbers, result, thing[0], thing[1])
-            if value == target:
-                answer_found = True 
-                result = ['(', thing[0], '/', thing[1], ')']
-                return result
-            temp = temps(numbers,thing[0],thing[1],value)
-            result = level_one(temp, result)
-            if answer_found:
-                to_insert = ['(', thing[0],'/', thing[1], ')']
-                return resultant(to_insert, value, result)
-
+    
+        
 #recieve user input for selection of numbers
 small_num = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10] # [x for x in range(1, 11)]*2
 large_num = [25,50,75,100]
