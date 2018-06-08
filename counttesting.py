@@ -1,4 +1,4 @@
-#CountDown2 temp#combinations second try 
+#CountDown2 temp #combinations second try 
 #Danny Maclean
 import random
 import itertools
@@ -7,6 +7,7 @@ import timeit
 import time
 #global for answer found
 answer_found = False
+all_done = False
 #globals()['answer_found'] = False
 
 class var:
@@ -45,6 +46,54 @@ def resultant(to_insert, value, result):
     front_half = result[:indice]
     back_half = result[indice:]
     return(front_half + to_insert + back_half)
+class output:
+    def __init__(self, value, diff,string):
+        self.value = value
+        self.diff = diff
+        self.string = string
+
+#statistical analysis to find all solutions
+#planned approach as follows:
+#   begin computations normally and if unique solution within 10 is discovered, store in array to be printed afterward
+#   unique solution needs to be checked against hash list
+#   exhaust entire tree and print
+def answers_analysis(numbers, result, all_results):
+    if(len(numbers)==1):
+        return
+    ops = ['+', '-', '/', '*']
+    global answer_found
+    global target
+    global all_done
+    first = list(itertools.permutations(numbers, 2))
+    #need new list to pass to level two
+    all_done = False
+    for thing in first:
+        for op in ops:
+        #compressed operations loop
+            if op=='/' and ((thing[1]==0) or ((thing[0]/thing[1])%1 != 0)):
+                break
+            if op=='-' and ((thing[0] - thing[1]) <= 0):
+                break
+            value = guess(op, numbers, result, thing[0], thing[1])
+            #if answer is within 10 AND hasn't been found yet, store and exit
+            if 0< (target - abs(value)) < 10:
+                result = ['(', thing[0], op, thing[1], ')']
+                i = output(value, target - abs(value), result)
+                answer_found = True
+                return i
+            # if value == target:
+            #     answer_found = True
+            #     result = ['(', thing[0], op, thing[1], ')']
+            #     return result
+            temp = temps(numbers,thing[0],thing[1],value)
+            result = level_one(temp, result)
+            if answer_found:
+                to_insert = ['(', thing[0],op, thing[1], ')']
+                result.string = resultant(to_insert, value, result.string)
+                return resultant(to_insert, value, result)
+    all_done = True
+
+    
 
 #depth computations 
 def level_one(numbers,result):
@@ -58,7 +107,6 @@ def level_one(numbers,result):
     for thing in first:
         for op in ops:
         #compressed operations loop
-        #need to check exception cases for subtraction and division
             if op=='/' and ((thing[1]==0) or ((thing[0]/thing[1])%1 != 0)):
                 break
             if op=='-' and ((thing[0] - thing[1]) <= 0):
@@ -123,3 +171,15 @@ else:
     print('time taken: ', end = '')
     print(end - start)
     #input("well done")
+answer_found = False
+#while not all_done:
+all_results = []
+result = output(0,0,None)
+i = answers_analysis(numbers, result, all_results)
+
+answer_found = False
+
+print(i.value)
+print(i.diff)
+print(*i.string, sep = '')
+
