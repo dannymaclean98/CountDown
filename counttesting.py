@@ -109,11 +109,18 @@ print("           Welcome to Countdown! I'll be your host, The All Knowing!")
 print("*****************************************************************************************")
 print("How many large numbers would you like? *Warning: your answer must be between 0-4* ")
 while True:
-    num_of_large_num=int(input("Answer: "))
-    if num_of_large_num > 4: 
+    num_of_large_num=input("Answer: ")
+    num_of_large_num = num_of_large_num.strip("!£$%^&*()_+-=[]:@~;#<>?,.\'\"")
+    num_of_large_num = num_of_large_num.strip(" ")
+    if num_of_large_num.isalpha() or len(num_of_large_num)>1:
+        print("Really Now...")
+    elif num_of_large_num=='':
+        print("Reall Now...")
+    elif int(num_of_large_num) > 4: 
         print("Really Now...")
     else: break
 print("Your 6 numbers are: ",end='')
+num_of_large_num = int(num_of_large_num)
 numbers = []
 result =[]
 for x in range(0, (6-num_of_large_num)):
