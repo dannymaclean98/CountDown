@@ -58,12 +58,12 @@ class output:
 #   unique solution needs to be checked against hash list
 #   exhaust entire tree and print
 def answers_analysis(numbers, result, all_results):
-    if(len(numbers)==1):
-        return
-    ops = ['+', '-', '/', '*']
     global answer_found
     global target
     global all_done
+    if(len(numbers)==1):
+        return
+    ops = ['+', '-', '/', '*']
     first = list(itertools.permutations(numbers, 2))
     #need new list to pass to level two
     all_done = False
@@ -80,7 +80,7 @@ def answers_analysis(numbers, result, all_results):
                 result = ['(', thing[0], op, thing[1], ')']
                 i = output(value, target - abs(value), result)
                 answer_found = True
-                return i
+                yield i
             # if value == target:
             #     answer_found = True
             #     result = ['(', thing[0], op, thing[1], ')']
@@ -91,7 +91,7 @@ def answers_analysis(numbers, result, all_results):
                 to_insert = ['(', thing[0],op, thing[1], ')']
                 result.string = resultant(to_insert, value, result.string)
                 return resultant(to_insert, value, result)
-    all_done = True
+    #all_done = True
 
     
 
@@ -172,14 +172,14 @@ else:
     print(end - start)
     #input("well done")
 answer_found = False
-#while not all_done:
 all_results = []
-result = output(0,0,None)
-i = answers_analysis(numbers, result, all_results)
+while not all_done:
+    result = output(0,0,None)
+    i = answers_analysis(numbers, result, all_results)
 
-answer_found = False
+    answer_found = False
 
-print(i.value)
-print(i.diff)
-print(*i.string, sep = '')
+    print(i.value)
+    print(i.diff)
+    print(*i.string, sep = '')
 
